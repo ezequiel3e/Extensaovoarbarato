@@ -1,0 +1,23 @@
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Diretórios do ambiente de desenvolvimento
+node_modules/
+.venv/
+.env
+
+# Arquivos de build
+dist/
+build/
+*.zip
+
+# Logs
+*.log
+npm-debug.log*
+
+# Chaves e credenciais
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local 

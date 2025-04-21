@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://test.api.amadeus.com">
+    <title>Voo Barato - Reserva de Passagem</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .reserva-container {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        
+        .resumo-voo {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .titulo-secao {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .info-value {
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .confirmar-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .confirmar-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .voltar-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Voo Barato</h1>
+            <p>Reserva de Passagem</p>
+        </header>
+
+        <main>
+            <div class="reserva-container">
+                <div class="resumo-voo">
+                    <div class="titulo-secao">Resumo do Voo</div>
+                    <div id="resumo-voo-detalhes">
+                        <!-- Detalhes preenchidos via JavaScript -->
+                    </div>
+                </div>
+
+                <div class="dados-passageiro">
+                    <div class="titulo-secao">Dados do Passageiro</div>
+                    <form id="form-reserva">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="documento">CPF</label>
+                            <input type="text" id="documento" required placeholder="000.000.000-00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="forma-pagamento">Forma de Pagamento</label>
+                            <select id="forma-pagamento" required>
+                                <option value="">Selecione uma opção</option>
+                                <option value="credito">Cartão de Crédito</option>
+                                <option value="debito">Cartão de Débito</option>
+                                <option value="pix">PIX</option>
+                                <option value="boleto">Boleto Bancário</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="confirmar-btn">Confirmar Reserva</button>
+                    </form>
+                </div>
+            </div>
+
+            <a href="index.html" class="voltar-link">Voltar para a busca</a>
+        </main>
+    </div>
+
+    <script type="module" src="reserva.js"></script>
+</body>
+
+</html>

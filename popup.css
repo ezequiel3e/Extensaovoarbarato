@@ -1,0 +1,503 @@
+/* Animações */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Estilos base */
+
+body {
+    width: 400px;
+    padding: 0;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f8f9fa;
+}
+
+.container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Banner */
+
+.banner {
+    position: relative;
+    height: 160px;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    overflow: hidden;
+}
+
+.banner-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.2;
+}
+
+.banner-content {
+    position: relative;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    z-index: 1;
+}
+
+.banner-content h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.banner-content p {
+    margin: 10px 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+
+/* Formulário de busca */
+
+.search-form {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.input-container {
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+}
+
+
+/* Botão de busca */
+
+.search-button {
+    width: 100%;
+    padding: 14px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-button:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.search-button:active {
+    transform: translateY(0);
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+
+/* Sugestões */
+
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.airport-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.airport-item:last-child {
+    border-bottom: none;
+}
+
+.airport-item:hover {
+    background: #f5f5f5;
+    padding-left: 20px;
+}
+
+.airport-item.selected {
+    background: #e8f5e9;
+    border-left: 4px solid #4CAF50;
+}
+
+
+/* Loading */
+
+.loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+.loading p {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+}
+
+
+/* Error */
+
+.error {
+    background: #ffebee;
+    color: #d32f2f;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 14px;
+    text-align: center;
+    display: none;
+}
+
+
+/* Resultados */
+
+.results {
+    padding: 0 20px 20px;
+}
+
+.flight-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.flight-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #4CAF50;
+}
+
+.airline-info {
+    margin-bottom: 12px;
+}
+
+.airline-info h3 {
+    margin: 0;
+    color: #2e7d32;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.flight-number {
+    color: #666;
+    font-size: 14px;
+    margin: 4px 0 0;
+}
+
+.time-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 16px 0;
+    position: relative;
+    padding: 0 12px;
+}
+
+.departure,
+.arrival {
+    text-align: center;
+    flex: 0 0 auto;
+}
+
+.departure strong,
+.arrival strong {
+    display: block;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.departure span,
+.arrival span {
+    display: block;
+    font-size: 14px;
+    color: #666;
+}
+
+.flight-duration {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    margin: 0 20px;
+}
+
+.duration-line {
+    height: 2px;
+    background: #4CAF50;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.flight-duration span {
+    background: white;
+    padding: 4px 8px;
+    font-size: 14px;
+    color: #666;
+    position: relative;
+    border: 1px solid #4CAF50;
+    border-radius: 12px;
+}
+
+.price-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.price {
+    font-size: 24px;
+    color: #4CAF50;
+    font-weight: 600;
+}
+
+.book-button {
+    background: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.book-button:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+}
+
+
+/* Scrollbar personalizada */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4CAF50;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #45a049;
+}
+
+.flight-details {
+    margin-top: 12px;
+}
+
+.flight-info {
+    margin-bottom: 16px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 24px;
+    color: #666;
+    background: #f5f5f5;
+    border-radius: 8px;
+    margin: 16px 0;
+}
+
+
+/* Estilos para cartões de voos com preços especiais */
+
+.flight-card.melhor-preco {
+    border: 2px solid #4CAF50;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    position: relative;
+}
+
+.flight-card.preco-otimo {
+    border: 2px solid #8BC34A;
+    position: relative;
+}
+
+.melhor-preco-valor {
+    color: #4CAF50;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+
+/* Etiquetas de preço */
+
+.etiqueta-preco {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.etiqueta-melhor {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.etiqueta-otimo {
+    background-color: #8BC34A;
+    color: white;
+}
+
+.etiqueta-bom {
+    background-color: #CDDC39;
+    color: #333;
+}
+
+
+/* Estilo para comparação de preços */
+
+.comparativo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+.comparacao-titulo {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.comparacao-valores {
+    display: flex;
+    gap: 15px;
+}
+
+.comparacao-item {
+    text-align: center;
+}
+
+.comparacao-companhia {
+    font-size: 12px;
+    color: #666;
+}
+
+.valor-preco {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.valor-preco.melhor {
+    color: #4CAF50;
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://test.api.amadeus.com">
+    <title>Voo Barato - Encontre as melhores ofertas</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Definindo fontes padrão do sistema como fallback */
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Voo Barato</h1>
+            <p>Encontre as melhores ofertas de voos</p>
+        </header>
+
+        <main>
+            <form class="search-form" id="search-form">
+                <div class="input-group">
+                    <label for="origem">Origem</label>
+                    <input type="text" id="origem" placeholder="De onde você vai sair?" autocomplete="off">
+                    <div id="sugestoes-origem" class="sugestoes-container"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="destino">Destino</label>
+                    <input type="text" id="destino" placeholder="Para onde você vai?" autocomplete="off">
+                    <div id="sugestoes-destino" class="sugestoes-container"></div>
+                </div>
+
+                <div class="input-group">
+                    <label for="data">Data</label>
+                    <input type="date" id="data">
+                </div>
+
+                <button id="buscar" type="button">
+                    <span>Buscar Voos</span>
+                </button>
+            </form>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Buscando os melhores voos para você...</p>
+            </div>
+
+            <div id="resultados"></div>
+        </main>
+    </div>
+
+    <script type="module" src="src/services/flightService.js"></script>
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+{
+    "name": "Voo Barato",
+    "version": "1.0.0",
+    "description": "Encontre as melhores ofertas de voos",
+    "manifest_version": 3,
+    "author": "Voo Barato Team",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "Voo Barato",
+        "default_icon": "icons/icon128.png"
+    },
+    "permissions": [
+        "storage",
+        "activeTab"
+    ],
+    "host_permissions": [
+        "https://test.api.amadeus.com/*",
+        "https://api.amadeus.com/*"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://test.api.amadeus.com https://api.amadeus.com"
+    },
+    "web_accessible_resources": [{
+        "resources": [
+            "services/*",
+            "data/*",
+            "config.js"
+        ],
+        "matches": ["<all_urls>"]
+    }]
+}
