@@ -4,14 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://test.api.amadeus.com">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.google.com https://*.latamairlines.com https://*.voegol.com.br https://*.voeazul.com.br https://*.aa.com https://*.delta.com https://*.copaair.com https://*.flytap.com https://*.united.com https://*.avianca.com https://*.emirates.com https://*.querogol.com.br; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'inline-speculation-rules'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://test.api.amadeus.com https://api.amadeus.com; img-src 'self' data:;">
     <title>Voo Barato - Encontre as melhores ofertas</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="src/css/notification.css">
     <style>
         /* Definindo fontes padrão do sistema como fallback */
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+        /* Estilos para garantir a visibilidade da div de resultados */
+        
+        #resultados {
+            min-height: 50px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -24,40 +31,52 @@
         </header>
 
         <main>
-            <form class="search-form" id="search-form">
-                <div class="input-group">
-                    <label for="origem">Origem</label>
-                    <input type="text" id="origem" placeholder="De onde você vai sair?" autocomplete="off">
-                    <div id="sugestoes-origem" class="sugestoes-container"></div>
+            <div id="busca-container">
+                <form class="search-form" id="search-form">
+                    <div class="input-group">
+                        <label for="origem">Origem</label>
+                        <input type="text" id="origem" placeholder="De onde você vai sair?" autocomplete="off">
+                        <div id="sugestoes-origem" class="sugestoes-container"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="destino">Destino</label>
+                        <input type="text" id="destino" placeholder="Para onde você vai?" autocomplete="off">
+                        <div id="sugestoes-destino" class="sugestoes-container"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="data">Data</label>
+                        <input type="date" id="data">
+                        <small class="form-help">Selecione uma data (máximo 1 ano a partir de hoje)</small>
+                    </div>
+
+                    <button id="buscar" type="button">
+                        <span>Buscar Voos</span>
+                    </button>
+                </form>
+
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Buscando os melhores voos para você...</p>
                 </div>
 
-                <div class="input-group">
-                    <label for="destino">Destino</label>
-                    <input type="text" id="destino" placeholder="Para onde você vai?" autocomplete="off">
-                    <div id="sugestoes-destino" class="sugestoes-container"></div>
+                <div id="resultados" class="resultados">
+                    <!-- Conteúdo carregado dinamicamente -->
                 </div>
-
-                <div class="input-group">
-                    <label for="data">Data</label>
-                    <input type="date" id="data">
-                </div>
-
-                <button id="buscar" type="button">
-                    <span>Buscar Voos</span>
-                </button>
-            </form>
-
-            <div id="loading" class="loading" style="display: none;">
-                <div class="spinner"></div>
-                <p>Buscando os melhores voos para você...</p>
             </div>
-
-            <div id="resultados"></div>
         </main>
     </div>
 
-    <script type="module" src="src/services/flightService.js"></script>
-    <script type="module" src="index.js"></script>
+    <!-- Scripts com ordem de carregamento específica -->
+    <script src="bridge.js" type="module"></script>
+    <script src="load-modules.js" type="module"></script>
+    <script src="setup.js"></script>
+    <script src="src/js/notification.js"></script>
+    <script src="fixForm.js"></script>
+    <script src="fixSugestoes.js"></script>
+    <script src="init.js" type="module"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>

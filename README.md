@@ -1,41 +1,61 @@
-# VoaBarato - Extensão Chrome para Busca de Passagens
+# Voo Barato
 
-Uma extensão Chrome simples para buscar preços de passagens aéreas usando APIs gratuitas.
+Aplicação para busca de voos com os melhores preços, utilizando a API Amadeus.
 
-## Configuração
+## Funcionalidades
 
-1. Registre-se no [Aviation Stack](https://aviationstack.com/) para obter uma chave de API gratuita
-2. Abra o arquivo `popup.js` e substitua `SUA_API_KEY_AQUI` pela sua chave de API
+- Busca de voos com origem e destino
+- Sugestões de aeroportos durante a digitação
+- Opção de busca flexível para encontrar as melhores tarifas
+- Visualização dos resultados em formato de cartões
+- Integração com sites de companhias aéreas para reserva
 
-## Instalação
+## Estrutura do Projeto
 
-1. Abra o Chrome e vá para `chrome://extensions/`
-2. Ative o "Modo do desenvolvedor" no canto superior direito
-3. Clique em "Carregar sem compactação" e selecione a pasta da extensão
+```
+.
+├── index.html            # Página principal
+├── styles.css            # Estilos CSS
+├── init.js               # Script de inicialização
+├── fixSearchFlights.js   # Garantia de disponibilidade da função de busca
+├── fixSugestoes.js       # Funcionalidade de sugestões
+├── fixBusca.js           # Funcionalidade de busca
+├── load-modules.js       # Carregador de módulos assíncrono
+├── src/
+│   ├── controllers/      # Controladores da aplicação
+│   │   └── buscaController.js  # Controlador de busca
+│   ├── services/         # Serviços da aplicação
+│   │   └── flightService.js    # Serviço de busca de voos
+│   └── utils/            # Utilitários
+│       ├── validacao.js       # Validação de entradas
+│       ├── sugestoes.js       # Gerenciamento de sugestões
+│       └── flightDisplay.js   # Exibição de resultados
+└── data/                 # Dados estáticos
+    └── aeroportos.js     # Lista de aeroportos
+```
 
-## Como Usar
+## Como Executar
 
-1. Clique no ícone da extensão na barra de ferramentas do Chrome
-2. Digite o código do aeroporto de origem (ex: GRU, BSB)
-3. Digite o código do aeroporto de destino (ex: JFK, MIA)
-4. Selecione a data desejada
-5. Clique em "Buscar Voos"
+1. Clone o repositório
+2. Abra o arquivo `index.html` no seu navegador
+3. Ou utilize um servidor local, como Live Server do VSCode
 
-## Limitações do MVP
+## Desenvolvimento
 
-- Usa a API gratuita do Aviation Stack (limitada a 100 requisições por mês)
-- Preços são simulados (API gratuita não fornece preços reais)
-- Busca apenas voos diretos
-- Não inclui filtros avançados
+Para desenvolvimento, recomenda-se:
 
-## Próximos Passos
+1. Instalar dependências: `npm install`
+2. Iniciar servidor de desenvolvimento: `npm run dev`
+3. Construir para produção: `npm run build`
 
-- Integrar APIs com preços reais
-- Adicionar busca de voos com conexões
-- Implementar filtros (preço, horário, companhia)
-- Adicionar sistema de alertas de preços
-- Melhorar a interface do usuário
+## Tecnologias Utilizadas
 
-## Contribuição
+- JavaScript puro (Vanilla JS)
+- HTML5 e CSS3
+- API Amadeus para busca de voos
+- Módulos ES6
+- Design responsivo
 
-Sinta-se à vontade para contribuir com o projeto! Abra uma issue ou envie um pull request. 
+## Licença
+
+MIT 

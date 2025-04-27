@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.google.com https://*.latamairlines.com https://*.voegol.com.br https://*.voeazul.com.br https://*.aa.com https://*.delta.com https://*.copaair.com https://*.flytap.com https://*.united.com https://*.avianca.com https://*.emirates.com https://*.querogol.com.br; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'inline-speculation-rules' 'sha256-5w6uv6CFitqxvk3QlVCePxphw2JFXw5Po6hSwznJuHo='; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://test.api.amadeus.com https://api.amadeus.com; img-src 'self' data:;">
+    <title>Voo Barato - Contexto</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Voo Barato</h1>
+            <p>Contexto da Viagem</p>
+        </header>
+
+        <main>
+            <div class="contexto-container">
+                <div class="titulo-secao">Informações Adicionais</div>
+                <div id="contexto-detalhes">
+                    <!-- Detalhes preenchidos via JavaScript -->
+                </div>
+            </div>
+
+            <a href="index.html" class="voltar-link">Voltar para a busca</a>
+        </main>
+    </div>
+
+    <!-- Carregamento sequencial de scripts -->
+    <script src="init-context.js"></script>
+    <script type="module" src="contexto.js"></script>
+</body>
+
+</html>

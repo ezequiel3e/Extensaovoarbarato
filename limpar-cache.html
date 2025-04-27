@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'inline-speculation-rules' 'sha256-5w6uv6CFitqxvk3QlVCePxphw2JFXw5Po6hSwznJuHo='; style-src 'self' 'unsafe-inline';">
+    <title>Voo Barato - Limpar Cache</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+        }
+        
+        p {
+            margin: 20px 0;
+            color: #555;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Voo Barato - Limpar Cache</h1>
+        <p>Esta página irá limpar o cache do seu navegador para a aplicação Voo Barato.</p>
+        <p>Isso pode ajudar a resolver problemas com scripts e recursos que não estão sendo carregados corretamente.</p>
+
+        <button id="limpar-button" onclick="limparManualmente()">Limpar Cache Manualmente</button>
+    </div>
+
+    <script>
+        function limparManualmente() {
+            // Remove todos os dados de armazenamento local
+            if (localStorage) {
+                localStorage.clear();
+                console.log('LocalStorage limpo');
+            }
+
+            // Remove todos os dados de session storage
+            if (sessionStorage) {
+                sessionStorage.clear();
+                console.log('SessionStorage limpo');
+            }
+
+            alert('Cache limpo com sucesso! Agora você pode fechar esta janela e tentar abrir a aplicação novamente.');
+        }
+
+        // A limpeza automática será executada pelo script externo
+    </script>
+    <script src="limpar-cache.js"></script>
+</body>
+
+</html>

@@ -7,24 +7,66 @@
     "action": {
         "default_popup": "index.html",
         "default_title": "Voo Barato",
-        "default_icon": "icons/icon128.png"
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "32": "icons/icon32.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "icons/icon16.png",
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
     },
     "permissions": [
         "storage",
-        "activeTab"
+        "activeTab",
+        "tabs",
+        "webNavigation"
     ],
     "host_permissions": [
         "https://test.api.amadeus.com/*",
-        "https://api.amadeus.com/*"
+        "https://api.amadeus.com/*",
+        "https://*.google.com/*",
+        "https://*.latamairlines.com/*",
+        "https://*.voegol.com.br/*",
+        "https://*.compras.voegol.com.br/*",
+        "https://*.voeazul.com.br/*",
+        "https://*.viaje.voeazul.com.br/*",
+        "https://*.aa.com/*",
+        "https://*.delta.com/*",
+        "https://*.copaair.com/*",
+        "https://*.flytap.com/*",
+        "https://*.booking.flytap.com/*",
+        "https://*.united.com/*",
+        "https://*.avianca.com/*",
+        "https://*.emirates.com/*",
+        "https://*.querogol.com.br/*",
+        "https://*.iberia.com/*",
+        "https://*.airfrance.com/*",
+        "https://*.klm.com/*",
+        "https://*.britishairways.com/*",
+        "https://*.qatarairways.com/*",
+        "https://*.lufthansa.com/*",
+        "https://*.ethiopianairlines.com/*",
+        "https://*.aircanada.com/*",
+        "https://*.egyptair.com/*",
+        "https://*.turkishairlines.com/*",
+        "https://*.aerolineas.com.ar/*"
     ],
     "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://test.api.amadeus.com https://api.amadeus.com"
+        "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://test.api.amadeus.com https://api.amadeus.com; form-action 'self' https://*.google.com https://*.latamairlines.com https://*.voegol.com.br https://*.compras.voegol.com.br https://*.voeazul.com.br https://*.viaje.voeazul.com.br https://*.aa.com https://*.delta.com https://*.copaair.com https://*.flytap.com https://*.booking.flytap.com https://*.united.com https://*.avianca.com https://*.emirates.com https://*.querogol.com.br https://*.iberia.com https://*.airfrance.com https://*.klm.com https://*.britishairways.com https://*.qatarairways.com https://*.lufthansa.com https://*.ethiopianairlines.com https://*.aircanada.com https://*.egyptair.com https://*.turkishairlines.com https://*.aerolineas.com.ar"
     },
     "web_accessible_resources": [{
         "resources": [
             "services/*",
             "data/*",
-            "config.js"
+            "config.js",
+            "images/*",
+            "images/airlines/*",
+            "src/utils/*"
         ],
         "matches": ["<all_urls>"]
     }]

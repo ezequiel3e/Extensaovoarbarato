@@ -1,3 +1,5 @@
+import { getAirlineRedirectUrl } from './services/airlineRedirectService.js';
+
 document.addEventListener('DOMContentLoaded', () => {
     const resumoVooDetalhes = document.getElementById('resumo-voo-detalhes');
     const formReserva = document.getElementById('form-reserva');
@@ -73,11 +75,57 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Aqui você poderia enviar os dados para um servidor
-        // Simulando confirmação de reserva
-        alert(`Reserva confirmada!\n\nPassageiro: ${nome}\nVoo: ${companhia} - ${origem} para ${destino}\nData: ${dataFormatada}\nValor: R$ ${parseFloat(preco).toFixed(2)}`);
+        // Dados do voo para redirecionamento
+        const flightData = {
+            origem: origem,
+            destino: destino,
+            data: data,
+            companhia: companhia,
+            preco: preco
+        };
 
-        // Redirecionar para a página inicial
-        window.location.href = 'index.html';
+        // Dados do passageiro
+        const passengerData = {
+            nome: nome,
+            documento: documento,
+            email: email,
+            telefone: telefone
+        };
+
+        try {
+            // Obter URL de redirecionamento para o site da companhia
+            const redirectUrl = getAirlineRedirectUrl(flightData, passengerData);
+
+            if (redirectUrl) {
+                // Mostrar uma mensagem rápida antes do redirecionamento
+                const mensagemStatus = document.createElement('div');
+                mensagemStatus.className = 'status-message';
+                mensagemStatus.innerHTML = `<p>Redirecionando para o site da ${companhia}...</p>`;
+                mensagemStatus.style.position = 'fixed';
+                mensagemStatus.style.top = '50%';
+                mensagemStatus.style.left = '50%';
+                mensagemStatus.style.transform = 'translate(-50%, -50%)';
+                mensagemStatus.style.background = 'rgba(0, 123, 255, 0.9)';
+                mensagemStatus.style.color = 'white';
+                mensagemStatus.style.padding = '20px';
+                mensagemStatus.style.borderRadius = '8px';
+                mensagemStatus.style.zIndex = '1000';
+                document.body.appendChild(mensagemStatus);
+
+                // Redirecionar diretamente para o site da companhia aérea após um breve momento
+                setTimeout(() => {
+                    console.log("Redirecionando para:", redirectUrl);
+                    window.location.href = redirectUrl;
+                }, 800);
+            } else {
+                // Caso não consiga gerar a URL de redirecionamento
+                alert(`Não foi possível redirecionar para o site da ${companhia}. Por favor, acesse o site diretamente.`);
+                window.location.href = 'index.html';
+            }
+        } catch (error) {
+            console.error("Erro ao processar redirecionamento:", error);
+            alert(`Erro ao redirecionar para o site da companhia. Por favor, tente novamente.`);
+            window.location.href = 'index.html';
+        }
     });
 });

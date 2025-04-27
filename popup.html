@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Voo Barato - Busca de Voos</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.google.com https://*.latamairlines.com https://*.voegol.com.br https://*.voeazul.com.br; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'inline-speculation-rules' 'sha256-5w6uv6CFitqxvk3QlVCePxphw2JFXw5Po6hSwznJuHo='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://test.api.amadeus.com https://api.amadeus.com; img-src 'self' data:;">
     <link rel="stylesheet" type="text/css" href="popup.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -158,6 +159,9 @@
             </div>
         </template>
     </div>
+
+    <!-- Carregamento sequencial de scripts -->
+    <script src="init-popup.js"></script>
     <script type="module" src="popup.js"></script>
 </body>
 
