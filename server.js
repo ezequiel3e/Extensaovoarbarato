@@ -4,8 +4,17 @@ const fetch = require('node-fetch');
 const cors = require('cors');
 
 const app = express();
+
+// Configuração mais específica do CORS
+const corsOptions = {
+    origin: '*', // Permite todas as origens
+    methods: ['GET', 'POST'], // Métodos permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
+    credentials: true // Permite credenciais
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cors());
 
 const AMADEUS_CLIENT_ID = process.env.ID_DO_CLIENTE_AMADEUS;
 const AMADEUS_CLIENT_SECRET = process.env.AMADEUS_CLIENT_SECRET;
