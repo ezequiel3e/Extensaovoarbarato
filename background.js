@@ -8,10 +8,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'searchFlights') {
         const { origin, destination, date, adults, cabinClass } = request.params;
 
-        // URL do backend - corrigindo para garantir o caminho correto
-        const backendUrl = 'https://voarbarato-backend.vercel.app/api/flights';
+        // URL do backend - usando URL completa do projeto Vercel
+        // Tentando diferentes formatos de URL para identificar qual está correta
+        const urls = [
+            'https://voarbarato-backend.vercel.app/api/flights',
+            'https://voarbarato-backend-gbihla7ai-esequiels-projects-73c4d6a0.vercel.app/api/flights',
+            'https://voarbarato-backend-git-master-esequiels-projects.vercel.app/api/flights'
+        ];
 
-        console.log('Enviando requisição para:', backendUrl);
+        const backendUrl = urls[0]; // Primeira opção
+
+        console.log('Tentando acessar:', backendUrl);
         console.log('Parâmetros:', { origin, destination, date, adults, cabinClass });
 
         // Fazer a requisição HTTP
@@ -23,8 +30,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 body: JSON.stringify({ origin, destination, date, adults, cabinClass })
             })
             .then(response => {
+                console.log('Status da resposta:', response.status, response.statusText);
+
                 if (!response.ok) {
                     return response.text().then(text => {
+                        console.error('Corpo da resposta com erro:', text);
                         throw new Error('Erro na resposta: ' + text);
                     });
                 }
@@ -36,7 +46,45 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             })
             .catch(error => {
                 console.error('Erro na requisição:', error);
-                sendResponse({ success: false, error: error.message });
+
+                // Se a primeira URL falhar, tentar a próxima
+                console.log('Tentando URL alternativa...');
+
+                // Função para tentar URL alternativa
+                const tryAlternativeUrl = (index) => {
+                    if (index >= urls.length) {
+                        sendResponse({ success: false, error: "Todas as URLs falharam: " + error.message });
+                        return;
+                    }
+
+                    console.log('Tentando URL:', urls[index]);
+
+                    fetch(urls[index], {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ origin, destination, date, adults, cabinClass })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => {
+                                    throw new Error('Erro na resposta: ' + text);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Resposta recebida da URL alternativa:', data);
+                            sendResponse({ success: true, data });
+                        })
+                        .catch(err => {
+                            console.error('Erro na URL alternativa:', err);
+                            tryAlternativeUrl(index + 1);
+                        });
+                };
+
+                tryAlternativeUrl(1); // Começar com a segunda URL
             });
 
         // Importante: retornar true para indicar que a resposta será assíncrona

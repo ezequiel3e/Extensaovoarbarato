@@ -28,9 +28,22 @@ app.use(cors({
     credentials: true
 }));
 
-// Rota de teste para verificar se o servidor está funcionando
+// Middleware para logar todas as requisições
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
+// Rota raiz
 app.get('/', (req, res) => {
-    res.json({ message: 'Servidor Voo Barato funcionando!' });
+    res.json({
+        status: 'ok',
+        message: 'Servidor Voo Barato API está funcionando!',
+        endpoints: {
+            test: '/api/test',
+            flights: '/api/flights (POST)'
+        }
+    });
 });
 
 const AMADEUS_CLIENT_ID = process.env.ID_DO_CLIENTE_AMADEUS;
