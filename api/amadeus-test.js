@@ -21,6 +21,8 @@ module.exports = async(req, res) => {
             // Tentaremos os dois formatos possíveis para as credenciais
             const clientId = process.env.AMADEUS_CLIENT_ID || process.env.ID_DO_CLIENTE_AMADEUS;
             const clientSecret = process.env.AMADEUS_CLIENT_SECRET;
+            const baseApiUrl = process.env.URL_BASE_AMADEUS || 'https://test.api.amadeus.com';
+            const tokenUrl = process.env.URL_TOKEN_AMADEUS || 'https://test.api.amadeus.com/v1/security/oauth2/token';
 
             // Retornar as informações das variáveis (sem expor o valor completo das senhas)
             const envInfo = {
@@ -28,6 +30,8 @@ module.exports = async(req, res) => {
                 clientIdName: clientId ? 'Definido como ' + (process.env.AMADEUS_CLIENT_ID ? 'AMADEUS_CLIENT_ID' : 'ID_DO_CLIENTE_AMADEUS') : 'Não encontrado',
                 clientSecretExists: !!clientSecret,
                 clientSecretFirstChars: clientSecret ? clientSecret.substring(0, 3) + '...' : 'Não disponível',
+                baseApiUrl: baseApiUrl,
+                tokenUrl: tokenUrl,
                 allEnvKeys: Object.keys(process.env)
             };
 
@@ -40,7 +44,7 @@ module.exports = async(req, res) => {
             }
 
             // Tentar obter um token da Amadeus para confirmar que as credenciais estão funcionando
-            const tokenResponse = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
+            const tokenResponse = await fetch(tokenUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
