@@ -8,12 +8,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'searchFlights') {
         const { origin, destination, date, adults, cabinClass } = request.params;
 
-        // URL do backend - usando URL completa do projeto Vercel
-        // Tentando diferentes formatos de URL para identificar qual está correta
+        // URL do backend - corrigindo com a URL exata do Vercel
         const urls = [
             'https://voarbarato-backend.vercel.app/api/flights',
-            'https://voarbarato-backend-gbihla7ai-esequiels-projects-73c4d6a0.vercel.app/api/flights',
-            'https://voarbarato-backend-git-master-esequiels-projects.vercel.app/api/flights'
+            'https://voarbarato-backend-cms256xom-esequiels-projects-73c4d6a0.vercel.app/api/flights'
         ];
 
         const backendUrl = urls[0]; // Primeira opção
