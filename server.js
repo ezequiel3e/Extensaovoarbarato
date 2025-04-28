@@ -4,17 +4,34 @@ const fetch = require('node-fetch');
 const cors = require('cors');
 
 const app = express();
-
-// Configuração mais específica do CORS
-const corsOptions = {
-    origin: '*', // Permite todas as origens
-    methods: ['GET', 'POST'], // Métodos permitidos
-    allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
-    credentials: true // Permite credenciais
-};
-
-app.use(cors(corsOptions));
 app.use(express.json());
+
+// Configurar CORS para permitir requisições da extensão
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
+    // Responder imediatamente a requisições OPTIONS
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    next();
+});
+
+// Usar o middleware CORS também para maior compatibilidade
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+    credentials: true
+}));
+
+// Rota de teste para verificar se o servidor está funcionando
+app.get('/', (req, res) => {
+    res.json({ message: 'Servidor Voo Barato funcionando!' });
+});
 
 const AMADEUS_CLIENT_ID = process.env.ID_DO_CLIENTE_AMADEUS;
 const AMADEUS_CLIENT_SECRET = process.env.AMADEUS_CLIENT_SECRET;
@@ -48,28 +65,42 @@ async function getAccessToken() {
     return accessToken;
 }
 
+// Rota para testar se o servidor está funcionando
 app.get('/api/test', (req, res) => {
-    res.json({ status: 'ok', message: 'Servidor está funcionando!' });
+    res.json({ status: 'ok', message: 'Servidor Voo Barato está funcionando!' });
 });
 
+// Rota principal para busca de voos
 app.post('/api/flights', async(req, res) => {
     try {
         const { origin, destination, date, adults = 1, cabinClass = 'ECONOMY' } = req.body;
         if (!origin || !destination || !date) {
             return res.status(400).json({ error: 'Parâmetros obrigatórios ausentes.' });
         }
+
+        console.log('Recebida requisição para buscar voos:', { origin, destination, date });
+
         const token = await getAccessToken();
         const url = `${AMADEUS_BASE_URL}/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination}&departureDate=${date}&adults=${adults}&travelClass=${cabinClass}&currencyCode=BRL&max=20`;
+
+        console.log('Enviando requisição para Amadeus:', url);
+
         const response = await fetch(url, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
         if (!response.ok) {
             const error = await response.text();
+            console.error('Erro na resposta da Amadeus:', error);
             return res.status(500).json({ error: 'Erro na busca de voos', details: error });
         }
+
         const data = await response.json();
+        console.log('Resposta recebida da Amadeus, total de voos:', data.data ? data.data.length : 0);
+
         res.json(data);
     } catch (err) {
+        console.error('Erro ao processar requisição:', err);
         res.status(500).json({ error: err.message });
     }
 });
