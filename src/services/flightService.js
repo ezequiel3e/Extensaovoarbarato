@@ -1,4 +1,4 @@
-import { config } from '../../config.js';
+import { config, BACKEND_URL } from '../config.js';
 
 console.log('flightService.js carregado!');
 
@@ -514,340 +514,43 @@ export function processFlightResults(flightResults, params = {}) {
     }
 }
 
-// Exportando a função searchFlights
 export async function searchFlights(params) {
-    console.log('Iniciando pesquisa de voos com parâmetros:', params);
-
-    // Normalizar e validar parâmetros
-    const {
-        origin,
-        destination,
-        date,
-        buscaFlexivel = false,
-        retries = 0
-    } = params;
-
-    // Validar os parâmetros
-    if (!origin || !destination) {
-        throw new Error('Os códigos de origem e destino são obrigatórios');
+    // Normalizar parâmetros
+    const { origin, destination, date, adults = 1, cabinClass = 'ECONOMY' } = params;
+    if (!origin || !destination || !date) {
+        return { error: 'Parâmetros obrigatórios ausentes.', results: [] };
     }
 
-    // Validar os códigos IATA e obter mensagens
-    const validacao = validateSearchParams({ origin, destination, date, buscaFlexivel });
+    return new Promise((resolve, reject) => {
+        try {
+            console.log('Enviando solicitação para o background script');
+            console.log('Parâmetros:', { origin, destination, date, adults, cabinClass });
 
-    if (!validacao.valid) {
-        return { error: validacao.message, results: [] };
-    }
+            // Usar comunicação de mensagens do Chrome
+            chrome.runtime.sendMessage({
+                action: 'searchFlights',
+                params: { origin, destination, date, adults, cabinClass }
+            }, response => {
+                console.log('Resposta recebida do background script:', response);
 
-    // Armazenar a mensagem sobre a data para uso posterior
-    const mensagemData = validacao.dateMessage;
-    const dataValidada = validacao.date;
-
-    // Adaptar parâmetros para o formato esperado pela API
-    const today = new Date();
-    const nextYear = new Date();
-    nextYear.setFullYear(today.getFullYear() + 1);
-
-    // Parâmetros padrão
-    let searchParams = {
-        origin,
-        destination,
-        adults: 1,
-        currency: 'BRL',
-        cabinClass: 'ECONOMY',
-        nonStop: false // Por padrão, permitir voos com escala
-    };
-
-    // Usar a data validada pela função validateSearchParams
-    const formattedDate = dataValidada;
-
-    if (!formattedDate) {
-        throw new Error('Data de partida inválida ou não fornecida');
-    }
-
-    searchParams = {
-        ...searchParams,
-        outboundDate: formattedDate
-    };
-
-    try {
-        // Verificar limites de requisição
-        if (shouldThrottleRequests()) {
-            console.warn('Limite de requisições atingido. Espere alguns minutos antes de tentar novamente.');
-            return { error: 'Muitas requisições. Tente novamente em alguns minutos.', results: [] };
-        }
-
-        // Obter token de acesso
-        const token = await getAccessToken();
-        if (!token) {
-            console.error('Não foi possível obter token de acesso');
-            return { error: 'Serviço indisponível no momento. Tente novamente mais tarde.', results: [] };
-        }
-
-        let tentativas = 0;
-        const maxTentativas = 2;
-        let responseData;
-
-        while (tentativas < maxTentativas && !responseData) {
-            tentativas++;
-            console.log(`Tentativa ${tentativas} de ${maxTentativas} para buscar voos`, searchParams);
-
-            try {
-                // Construir a URL base da API
-                let apiUrl = `${API_ENVIRONMENTS.test.BASE_URL}/shopping/flight-offers`;
-
-                // Adicionar parâmetros comuns
-                const urlParams = new URLSearchParams();
-                urlParams.append('originLocationCode', searchParams.origin);
-                urlParams.append('destinationLocationCode', searchParams.destination);
-
-                // Validar e formatar datas
-                const formatarDataParaAPI = (dataStr) => {
-                    // Verifica se a data está no formato YYYY-MM-DD
-                    const regexData = /^\d{4}-\d{2}-\d{2}$/;
-                    if (regexData.test(dataStr)) {
-                        return dataStr; // Já está no formato correto
-                    }
-
-                    // Se não estiver no formato correto, tenta converter
-                    try {
-                        const data = new Date(dataStr);
-                        if (isNaN(data.getTime())) {
-                            throw new Error('Data inválida');
-                        }
-                        const yyyy = data.getFullYear();
-                        const mm = String(data.getMonth() + 1).padStart(2, '0');
-                        const dd = String(data.getDate()).padStart(2, '0');
-                        return `${yyyy}-${mm}-${dd}`;
-                    } catch (e) {
-                        console.error('Erro ao formatar data:', e);
-                        // Retorna a data atual como fallback
-                        const hoje = new Date();
-                        const yyyy = hoje.getFullYear();
-                        const mm = String(hoje.getMonth() + 1).padStart(2, '0');
-                        const dd = String(hoje.getDate()).padStart(2, '0');
-                        return `${yyyy}-${mm}-${dd}`;
-                    }
-                };
-
-                // Para busca normal, usamos a data específica
-                urlParams.append('departureDate', formatarDataParaAPI(searchParams.outboundDate));
-                urlParams.append('max', '20');
-
-                // Adicionar parâmetro nonStop apenas se for especificado
-                if (searchParams.nonStop) {
-                    urlParams.append('nonStop', 'true');
-                }
-
-                // Adicionar outros parâmetros
-                urlParams.append('adults', searchParams.adults.toString());
-                urlParams.append('currencyCode', searchParams.currency);
-                urlParams.append('travelClass', searchParams.cabinClass);
-
-                // Combinar URL base com parâmetros
-                apiUrl += `?${urlParams.toString()}`;
-                console.log('URL COMPLETA da API para busca de voos:', apiUrl);
-
-                // Fazer a requisição
-                console.log('Fazendo requisição com token:', token.substring(0, 10) + '...');
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    // Tentar obter mais detalhes sobre o erro
-                    let errorDetails = '';
-                    try {
-                        const errorResponse = await response.text();
-                        errorDetails = errorResponse;
-                        console.error('Detalhes do erro na requisição:', errorResponse);
-                    } catch (e) {
-                        console.error('Não foi possível obter detalhes do erro:', e);
-                    }
-
-                    console.warn(`Erro na resposta da API (Tentativa ${tentativas}): ${response.status} - ${response.statusText}`);
-
-                    // Se for a primeira tentativa e houver erro, tentar trocar o ambiente
-                    if (tentativas === 1) {
-                        console.log('Tentando trocar ambiente de API...');
-                        toggleApiEnvironment();
-                        // Continuar para a próxima tentativa
-                        continue;
-                    }
-
-                    throw new Error(`Erro na API: ${response.status} - ${response.statusText} - Detalhes: ${errorDetails}`);
-                }
-
-                responseData = await response.json();
-                console.log(`Dados recebidos da API com ${responseData?.data?.length || 0} resultados:`,
-                    responseData ? (responseData.data ? responseData.data.slice(0, 2) : 'Sem dados') : 'Sem dados');
-
-                // Incrementar contador de requisições bem-sucedidas
-                incrementRequestCount();
-
-                // Processar resultados
-                const resultados = processFlightResults(responseData, searchParams);
-
-                // Ordenar resultados por preço crescente explicitamente no código
-                resultados.sort((a, b) => parseFloat(a.priceWithDiscount) - parseFloat(b.priceWithDiscount));
-
-                // Adicionar informações adicionais aos resultados
-                const resultadosAgrupados = {
-                    results: resultados,
-                    query: {
-                        origin: searchParams.origin,
-                        originName: COMMON_BR_IATA_CODES[searchParams.origin] || searchParams.origin,
-                        destination: searchParams.destination,
-                        destinationName: COMMON_BR_IATA_CODES[searchParams.destination] || searchParams.destination,
-                        departureDate: formatarDataParaAPI(searchParams.outboundDate),
-                        adults: searchParams.adults,
-                        cabinClass: searchParams.cabinClass
-                    },
-                    meta: {
-                        count: resultados.length,
-                        currency: searchParams.currency,
-                        timestamp: new Date().toISOString(),
-                        mensagemData: mensagemData // Incluir a mensagem sobre a data
-                    },
-                    // Manter compatibilidade com o código existente que pode esperar os resultados em "voos"
-                    voos: resultados
-                };
-
-                // Marcar os resultados para informar sobre ajustes de data
-                if (mensagemData) {
-                    resultadosAgrupados.results.forEach(voo => {
-                        voo.dataAjustada = mensagemData;
+                if (response && response.success) {
+                    // Processar os resultados
+                    const results = processFlightResults(response.data, params);
+                    resolve(results);
+                } else {
+                    console.error('Erro retornado pelo background:', response ? response.error : 'Resposta vazia');
+                    resolve({
+                        error: response ? response.error : 'Erro na comunicação com o servidor',
+                        results: []
                     });
                 }
+            });
 
-                // Adicionar urls de reserva para cada voo
-                resultadosAgrupados.results.forEach(voo => {
-                    // Para cada voo, construir a URL de reserva baseada na companhia aérea
-                    switch (voo.airlineCode) {
-                        case 'G3': // GOL
-                            voo.bookingUrl = `https://www.voegol.com.br/pt`;
-                            break;
-                        case 'LA': // LATAM
-                        case 'JJ':
-                            voo.bookingUrl = `https://www.latamairlines.com/br/pt`;
-                            break;
-                        case 'AD': // Azul
-                            voo.bookingUrl = `https://www.voeazul.com.br/`;
-                            break;
-                        default:
-                            // Para outras companhias, usar um site de agregador
-                            voo.bookingUrl = `https://www.decolar.com/`;
-                    }
-                });
-
-                // Adicionar informações de dia, data e hora para cada voo
-                if (Array.isArray(responseData.data) && responseData.data.length > 0) {
-                    responseData.data = responseData.data.map(voo => {
-                        if (voo.outbound && voo.outbound.departureDate) {
-                            const departureDate = new Date(voo.outbound.departureDate);
-                            const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-                            const dia = diasSemana[departureDate.getDay()];
-                            const data = departureDate.toLocaleDateString('pt-BR');
-                            const hora = departureDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-                            voo.outbound.formattedDepartureInfo = {
-                                dia,
-                                data,
-                                hora
-                            };
-                        }
-                        return voo;
-                    });
-                }
-
-                return resultadosAgrupados;
-            } catch (error) {
-                console.error(`Erro na tentativa ${tentativas}:`, error);
-
-                if (tentativas < maxTentativas) {
-                    // Se houver erro com parâmetros complexos, tentar simplificar na segunda tentativa
-                    if (tentativas === 1) {
-                        try {
-                            console.log('Tentando com parâmetros simplificados...');
-
-                            // Construir URL simplificada
-                            let urlSimplificada = `${API_ENVIRONMENTS.test.BASE_URL}/shopping/flight-offers?originLocationCode=${searchParams.origin}&destinationLocationCode=${searchParams.destination}`;
-                            urlSimplificada += `&departureDate=${formatarDataParaAPI(searchParams.outboundDate)}`;
-                            urlSimplificada += `&adults=${searchParams.adults}&currencyCode=BRL&max=20`;
-
-                            console.log('URL simplificada:', urlSimplificada);
-
-                            const respostaSimplificada = await fetch(urlSimplificada, {
-                                method: 'GET',
-                                headers: {
-                                    'Authorization': `Bearer ${token}`,
-                                    'Content-Type': 'application/json'
-                                }
-                            });
-
-                            if (!respostaSimplificada.ok) {
-                                // Tentar obter mais detalhes sobre o erro
-                                let errorDetailsSimplified = '';
-                                try {
-                                    const errorResponseSimplified = await respostaSimplificada.text();
-                                    errorDetailsSimplified = errorResponseSimplified;
-                                    console.error('Detalhes do erro (tentativa simplificada):', errorResponseSimplified);
-                                } catch (e) {
-                                    console.error('Não foi possível obter detalhes do erro na tentativa simplificada:', e);
-                                }
-                                throw new Error(`Erro na API (tentativa simplificada): ${respostaSimplificada.status} - ${respostaSimplificada.statusText} - Detalhes: ${errorDetailsSimplified}`);
-                            }
-
-                            if (respostaSimplificada.ok) {
-                                const dadosSimplificados = await respostaSimplificada.json();
-                                console.log('Resposta com parâmetros simplificados obtida com sucesso');
-
-                                const resultadosSimplificados = processFlightResults(dadosSimplificados, searchParams);
-                                resultadosSimplificados.sort((a, b) => parseFloat(a.priceWithDiscount) - parseFloat(b.priceWithDiscount));
-
-                                return {
-                                    results: resultadosSimplificados,
-                                    query: {
-                                        origin: searchParams.origin,
-                                        originName: COMMON_BR_IATA_CODES[searchParams.origin] || searchParams.origin,
-                                        destination: searchParams.destination,
-                                        destinationName: COMMON_BR_IATA_CODES[searchParams.destination] || searchParams.destination,
-                                        departureDate: searchParams.outboundDate ? `${searchParams.outboundDate.start} até ${searchParams.outboundDate.end}` : '',
-                                        adults: searchParams.adults,
-                                        buscaFlexivel: buscaFlexivel
-                                    },
-                                    meta: {
-                                        count: resultadosSimplificados.length,
-                                        currency: 'BRL',
-                                        timestamp: new Date().toISOString(),
-                                        buscaFlexivel: buscaFlexivel
-                                    }
-                                };
-                            }
-                        } catch (simplifiedError) {
-                            console.error('Erro ao tentar com parâmetros simplificados:', simplifiedError);
-                        }
-                    }
-                }
-            }
+        } catch (err) {
+            console.error('Erro ao enviar mensagem para background:', err);
+            resolve({ error: err.message, results: [] });
         }
-
-        // Se chegou aqui sem responseData, retornar erro
-        return {
-            error: 'Não foi possível encontrar voos com os parâmetros especificados.',
-            results: []
-        };
-    } catch (error) {
-        console.error('Erro ao buscar voos:', error);
-        return {
-            error: 'Erro ao buscar voos. Por favor, tente novamente mais tarde.',
-            results: []
-        };
-    }
+    });
 }
 
 /**

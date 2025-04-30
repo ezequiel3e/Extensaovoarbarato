@@ -59,3 +59,51 @@ Para desenvolvimento, recomenda-se:
 ## Licença
 
 MIT 
+
+# Backend Proxy Seguro para Amadeus
+
+Este backend serve como intermediário seguro entre sua extensão/front-end e a API da Amadeus, protegendo suas credenciais.
+
+## Como usar
+
+1. **Clone este repositório e acesse a pasta:**
+   ```sh
+   git clone <seu-repo>
+   cd <pasta-do-backend>
+   ```
+
+2. **Crie um arquivo `.env` com suas credenciais de produção da Amadeus:**
+   ```env
+   AMADEUS_CLIENT_ID=SEU_CLIENT_ID_AQUI
+   AMADEUS_CLIENT_SECRET=SEU_CLIENT_SECRET_AQUI
+   PORT=3001
+   ```
+
+3. **Instale as dependências:**
+   ```sh
+   npm install
+   ```
+
+4. **Inicie o servidor:**
+   ```sh
+   npm start
+   ```
+
+5. **No seu front-end/extensão, faça requisições para:**
+   ```
+   POST http://<seu-backend>/api/flights
+   Body (JSON):
+   {
+     "origin": "GRU",
+     "destination": "REC",
+     "date": "2024-07-01"
+   }
+   ```
+
+## Segurança
+- Suas credenciais NUNCA ficam expostas no front-end.
+- O backend pode ser hospedado em Vercel, Render, Heroku, AWS, etc.
+
+## Observações
+- Adapte o endpoint conforme sua necessidade.
+- Para produção, use HTTPS. 
