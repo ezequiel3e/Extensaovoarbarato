@@ -58,7 +58,7 @@ Para desenvolvimento, recomenda-se:
 
 ## Licença
 
-MIT 
+Este projeto está licenciado sob a licença MIT. Veja o arquivo LICENSE para mais detalhes.
 
 # Backend Proxy Seguro para Amadeus
 
@@ -106,4 +106,14 @@ Este backend serve como intermediário seguro entre sua extensão/front-end e a 
 
 ## Observações
 - Adapte o endpoint conforme sua necessidade.
-- Para produção, use HTTPS. 
+- Para produção, use HTTPS.
+
+## Configuração
+
+2. **Configuração das variáveis de ambiente:**
+
+**IMPORTANTE: Nunca coloque credenciais no código-fonte ou no repositório!**
+
+As credenciais da API Amadeus devem ser configuradas APENAS no painel de variáveis de ambiente do Vercel ou em arquivos .env locais que NÃO são versionados.
+
+O frontend (extensão Chrome) nunca faz chamadas diretas para a API Amadeus. Todas as chamadas que necessitam de autenticação são feitas através do backend seguro no Vercel. 

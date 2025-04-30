@@ -1,14 +1,11 @@
 export const config = {
     API: {
-        // Valores fixos para uso na extensão Chrome
-        // Não usar process.env aqui porque não está disponível no ambiente da extensão
-        BASE_URL: 'https://api.amadeus.com/v2',
-        TOKEN_URL: 'https://api.amadeus.com/v1/security/oauth2/token',
+        // ATENÇÃO: Não armazenar credenciais no código da extensão!
+        // Todas as chamadas que precisam de autenticação devem ser feitas pelo backend
 
-        // ATENÇÃO: NÃO armazenar credenciais no código da extensão!
-        // Deixar vazio e usar apenas o backend para autenticação
-        CLIENT_ID: '',
-        CLIENT_SECRET: ''
+        // URLs para referência (não são usadas para chamadas diretas)
+        BASE_URL: 'https://api.amadeus.com/v2',
+        TOKEN_URL: 'https://api.amadeus.com/v1/security/oauth2/token'
     },
     CACHE: {
         EXPIRY: 1000 * 60 * 60 // 1 hora
@@ -26,6 +23,4 @@ export const config = {
     }
 };
 
-// Não é necessário validar CLIENT_ID e CLIENT_SECRET aqui
-// A validação será feita no backend
 console.log('Configuração carregada para extensão.');
